@@ -14,7 +14,7 @@ kamadak-exif = "0.6"
 fast_image_resize = "5"
 lru = "0.12"
 crossbeam-channel = "0.5"
-fs4 = "0.9"
+fs4 = "1.1"
 chrono = { version = "0.4", features = ["serde"] }
 thiserror = "2"
 anyhow = "1"
