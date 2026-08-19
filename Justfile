@@ -13,6 +13,9 @@ build-release:
 release:
     ./scripts/release.sh
 
+redo-release:
+    ./scripts/redo-release.sh
+
 fmt:
     cargo fmt --all
 
