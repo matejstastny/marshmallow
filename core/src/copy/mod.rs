@@ -49,11 +49,7 @@ enum CopyFileOutcome {
 pub struct CopyEngine;
 
 impl CopyEngine {
-    /// Runs synchronously on the calling thread — call this from a
-    /// dedicated background thread and forward `CopyProgress` over
-    /// `progress_tx` to the UI. Deliberately single-threaded/sequential:
-    /// the destination is normally one USB drive, and parallel writers
-    /// would just thrash it and make progress reporting non-monotonic.
+    // call this from a dedicated background thread and forward CopyProgress over progress_tx to the UI
     pub fn run(
         project: &Project,
         progress_tx: &Sender<CopyProgress>,
@@ -233,9 +229,6 @@ fn log_entry(
     })
 }
 
-/// Copies one file in chunks so cancellation can act mid-file and progress
-/// stays smooth for large videos. On cancel, any partially-written
-/// destination file is removed rather than left looking complete.
 fn copy_one(
     src: &std::path::Path,
     dest_base: &std::path::Path,

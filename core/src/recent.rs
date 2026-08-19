@@ -2,11 +2,6 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-/// A pointer to the most recently opened project's target directory,
-/// stored outside any single project so the app can offer to resume
-/// across process restarts without the user re-selecting the target
-/// first. Deliberately tiny — the actual project state (sources, items,
-/// decisions) always lives in the project file itself at the target.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RecentProject {
     pub target: PathBuf,

@@ -35,7 +35,6 @@ pub struct MediaItem {
 }
 
 impl MediaItem {
-    /// Absolute path on disk, given the source list it belongs to.
     pub fn absolute_path(&self, sources: &[Source]) -> Option<PathBuf> {
         sources
             .iter()
@@ -67,7 +66,6 @@ impl Project {
         }
     }
 
-    /// Default project file location: it travels with the target drive.
     pub fn default_path(target: &Path) -> PathBuf {
         target.join(".marshmallow").join("project.json")
     }
@@ -77,10 +75,6 @@ impl Project {
         Ok(serde_json::from_str(&data)?)
     }
 
-    /// Atomically write the project file: write to a sibling `.tmp`, fsync,
-    /// then rename over the real path. A crash mid-write leaves the
-    /// previous good file intact rather than a half-written one. The prior
-    /// good version is preserved as `.bak` as a cheap extra safety net.
     pub fn save(&mut self, path: &Path) -> anyhow::Result<()> {
         self.updated_at = Utc::now();
         if let Some(dir) = path.parent() {

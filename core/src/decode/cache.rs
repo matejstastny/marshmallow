@@ -4,9 +4,6 @@ use lru::LruCache;
 
 use super::request::DecodedImage;
 
-/// Caches decoded, already-downscaled images by their position in the
-/// review stream. Bounded by both entry count and an approximate byte
-/// budget, since a handful of full-viewport images can already add up.
 pub struct DecodedCache {
     entries: LruCache<usize, DecodedImage>,
     byte_budget: usize,
@@ -46,9 +43,6 @@ impl DecodedCache {
         }
     }
 
-    /// Drop any cached entry outside `keep_range`, except `protect`
-    /// (the index currently on screen). Used after a non-contiguous jump
-    /// so a stale prefetch window doesn't linger in memory.
     pub fn evict_outside(&mut self, keep_range: std::ops::Range<usize>, protect: usize) {
         let stale: Vec<usize> = self
             .entries
@@ -86,7 +80,6 @@ mod tests {
         cache.insert(0, img(10));
         cache.insert(1, img(10));
         cache.insert(2, img(10));
-        // budget is 25 bytes; inserting a third 10-byte entry must evict the LRU one
         assert!(cache.len() <= 2);
         assert!(cache.contains(2));
     }
@@ -98,6 +91,6 @@ mod tests {
         cache.insert(50, img(1));
         cache.evict_outside(0..10, 50);
         assert!(cache.contains(5));
-        assert!(cache.contains(50)); // protected even though outside range
+        assert!(cache.contains(50));
     }
 }

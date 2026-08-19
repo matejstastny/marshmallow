@@ -36,8 +36,6 @@ pub struct CopySummary {
     pub elapsed_ms: u64,
 }
 
-/// Appends one JSON object per line, flushed immediately after every
-/// write so the log stays readable even if the process crashes mid-copy.
 pub struct CopyLog {
     writer: BufWriter<File>,
 }

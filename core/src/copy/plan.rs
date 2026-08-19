@@ -1,8 +1,5 @@
 use std::path::{Path, PathBuf};
 
-/// Destination is namespaced by source basename so two sources with
-/// colliding relative paths (e.g. two SD cards both having
-/// `DCIM/100CANON/IMG_0001.JPG`) never collide with each other.
 pub fn destination_path(target: &Path, source_basename: &str, relative_path: &Path) -> PathBuf {
     target.join(sanitize(source_basename)).join(relative_path)
 }
@@ -21,11 +18,8 @@ fn sanitize(name: &str) -> String {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CollisionResolution {
-    /// No file at the destination path yet.
     Copy(PathBuf),
-    /// A file with the same size is already there — treated as already copied.
     SkipExisting,
-    /// A different file is already there — copy under a suffixed name instead.
     Renamed(PathBuf),
 }
 

@@ -7,13 +7,10 @@ pub struct DecodeJob {
     pub generation: u64,
 }
 
-/// Plain, `Send`-only decoded pixel data. GTK/GDK textures are constructed
-/// from this on the UI thread only — worker threads never touch GObjects.
 #[derive(Debug, Clone)]
 pub struct DecodedImage {
     pub width: u32,
     pub height: u32,
-    /// Tightly packed RGBA8 (stride == width * 4).
     pub rgba: Vec<u8>,
 }
 

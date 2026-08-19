@@ -1,9 +1,5 @@
 use std::path::Path;
 
-/// Broad category of a media file, derived from its extension.
-///
-/// Kept extension-based (no content sniffing) — cheap enough to run over
-/// tens of thousands of files during a directory scan.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum MediaKind {

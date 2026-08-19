@@ -1,8 +1,5 @@
 use gdk4::Key;
 
-/// Actions available on the review screen. Kept as a table -> `gdk::Key`
-/// mapping in one place so remapping later is a config change, not a
-/// UI-code change.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReviewAction {
     Keep,

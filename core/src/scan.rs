@@ -6,9 +6,6 @@ use walkdir::WalkDir;
 use crate::media::classify;
 use crate::project::{Decision, MediaItem, Source};
 
-/// Recursively scan every source directory and build the flat item list
-/// for a new project. Existing decisions from a prior scan of the same
-/// (source_id, relative_path) are preserved by the caller via `merge`.
 pub fn scan_sources(sources: &[Source]) -> Vec<MediaItem> {
     let mut items = Vec::new();
     for source in sources {
@@ -47,9 +44,6 @@ pub fn scan_sources(sources: &[Source]) -> Vec<MediaItem> {
     items
 }
 
-/// Merge a fresh scan with a previous item list, carrying decisions
-/// forward for items whose (source_id, relative_path) identity matches.
-/// Items present in `previous` but no longer found on disk are dropped.
 pub fn merge_with_previous(fresh: Vec<MediaItem>, previous: &[MediaItem]) -> Vec<MediaItem> {
     fresh
         .into_iter()

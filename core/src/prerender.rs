@@ -32,10 +32,6 @@ pub fn cache_dir(target: &Path) -> PathBuf {
     target.join(".marshmallow").join("cache")
 }
 
-/// Stable on-disk cache filename for an item, independent of relative-path
-/// characters/length/depth. Content is never invalidated — read-only camera
-/// media doesn't change under us, matching the app's existing v1 scope of
-/// path-based (not hash-based) identity.
 pub fn cache_path_for(target: &Path, source_id: u32, relative_path: &Path) -> PathBuf {
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};
@@ -48,13 +44,7 @@ pub fn cache_path_for(target: &Path, source_id: u32, relative_path: &Path) -> Pa
 pub struct PrerenderEngine;
 
 impl PrerenderEngine {
-    /// Decodes every photo once and writes a small already-downscaled JPEG
-    /// to the on-disk cache, so later interactive decoding (whether inside
-    /// or outside the RAM look-ahead window) reads a tiny file instead of
-    /// the original. Idempotent — already-cached photos are skipped, so an
-    /// interrupted run just resumes where it left off. Runs synchronously
-    /// on the calling thread via an internal worker pool; call this from a
-    /// dedicated background thread, same as `CopyEngine::run`.
+    // call this from a dedicated background thread, same as CopyEngine::run
     pub fn run(
         project: &Project,
         target_long_edge: u32,

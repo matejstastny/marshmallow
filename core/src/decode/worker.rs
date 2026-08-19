@@ -14,18 +14,13 @@ type RgbaImage = ImageBuffer<Rgba<u8>, Vec<u8>>;
 
 static REGISTER_HEIC: Once = Once::new();
 
-/// Must be called once before any decode happens so `image::ImageReader`
-/// can transparently open HEIC/HEIF files via libheif.
+// must run once before any decode, so image::ImageReader can open heic/heif files via libheif
 pub fn ensure_heic_registered() {
     REGISTER_HEIC.call_once(|| {
         libheif_rs::integration::image::register_all_decoding_hooks();
     });
 }
 
-/// Decode a photo, apply its EXIF orientation, and downscale it so its
-/// long edge is at most `target_long_edge` pixels (never upscaled). This
-/// is the core of keeping the prefetch cache cheap: nothing is ever
-/// decoded/cached at full source resolution.
 pub fn decode_and_resize(path: &Path, target_long_edge: u32) -> anyhow::Result<DecodedImage> {
     ensure_heic_registered();
 
@@ -80,10 +75,6 @@ fn decode_via_image_crate(path: &Path) -> anyhow::Result<RgbaImage> {
     Ok(img.to_rgba8())
 }
 
-/// Decodes a JPEG directly at a reduced DCT scale via libjpeg-turbo instead
-/// of decoding at full source resolution and downscaling afterward — for a
-/// 24+ MP camera photo this is the difference between the prefetch pipeline
-/// keeping up with fast browsing and falling behind it.
 fn decode_jpeg_scaled(path: &Path, target_long_edge: u32) -> anyhow::Result<RgbaImage> {
     let bytes = std::fs::read(path)?;
     let mut decompressor = turbojpeg::Decompressor::new()?;
@@ -136,8 +127,6 @@ fn read_exif_orientation(path: &Path) -> Option<u32> {
     field.value.get_uint(0)
 }
 
-/// Standard EXIF orientation values 1-8. 5 and 7 (transpose/transverse,
-/// mirrored+rotated) are rare outside a handful of scanner/camera models.
 fn apply_orientation(img: RgbaImage, orientation: u32) -> RgbaImage {
     match orientation {
         2 => image::imageops::flip_horizontal(&img),

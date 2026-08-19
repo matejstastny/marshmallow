@@ -17,7 +17,6 @@ fn build_ui(app: &adw::Application) {
     let widgets = widgets::build(app);
     let state = actions::new_state();
 
-    // Setup screen
     {
         let state = state.clone();
         let widgets = widgets.clone();
@@ -49,7 +48,6 @@ fn build_ui(app: &adw::Application) {
         btn.connect_clicked(move |_| actions::start_prerender(&state, &widgets));
     }
 
-    // Summary screen
     {
         let state = state.clone();
         let widgets = widgets.clone();
@@ -57,7 +55,6 @@ fn build_ui(app: &adw::Application) {
         btn.connect_clicked(move |_| actions::start_copy(&state, &widgets));
     }
 
-    // Copy screen
     {
         let state = state.clone();
         let btn = widgets.copy_cancel_button.clone();
@@ -76,7 +73,6 @@ fn build_ui(app: &adw::Application) {
         btn.connect_clicked(move |_| actions::reset_to_fresh_setup(&state, &widgets));
     }
 
-    // Pre-render screen
     {
         let state = state.clone();
         let btn = widgets.prerender_cancel_button.clone();
@@ -89,9 +85,6 @@ fn build_ui(app: &adw::Application) {
         btn.connect_clicked(move |_| actions::continue_review(&state, &widgets));
     }
 
-    // Global keyboard shortcuts for the review screen. Attached to the
-    // window (not a sub-widget) so they fire regardless of focus, and
-    // guarded so they only act while the review screen is actually shown.
     {
         let state = state.clone();
         let widgets = widgets.clone();

@@ -24,8 +24,6 @@ pub fn new_state() -> SharedState {
     Rc::new(RefCell::new(AppState::default()))
 }
 
-// ---------------------------------------------------------------- helpers
-
 fn switch_screen(widgets: &Widgets, name: &str) {
     widgets.stack.set_visible_child_name(name);
     widgets.header_title.set_text(match name {
@@ -42,9 +40,6 @@ fn switch_screen(widgets: &Widgets, name: &str) {
         .set_visible(matches!(name, "review" | "summary"));
 }
 
-/// Prefer the on-disk pre-rendered cache (small, decodes fast) over the
-/// original source file, when one exists — used by every place that feeds
-/// a path into the decode pipeline.
 fn effective_decode_path(
     target: &std::path::Path,
     sources: &[Source],
@@ -89,8 +84,6 @@ fn build_texture(image: &DecodedImage) -> gdk4::Texture {
     )
     .upcast()
 }
-
-// ------------------------------------------------------------ setup screen
 
 pub fn add_source(state: &SharedState, widgets: &Widgets) {
     let dialog = gtk4::FileDialog::builder()
@@ -215,12 +208,6 @@ pub fn update_setup_state(state: &SharedState, widgets: &Widgets) {
     }
 }
 
-/// Pre-fills the setup screen from the last opened project (if any) so a
-/// restart can offer "Resume Review" immediately instead of requiring the
-/// target to be re-chosen by hand before the app even checks for one. Only
-/// previews the target/sources — does not touch `state.project`, so
-/// nothing (autosave thread, decode pipeline) spins up until the user
-/// actually clicks through.
 pub fn try_restore_recent(state: &SharedState, widgets: &Widgets) {
     let Some(recent) = marshmallow_core::recent::RecentProject::load() else {
         return;
@@ -299,8 +286,6 @@ pub fn reset_to_fresh_setup(state: &SharedState, widgets: &Widgets) {
     update_setup_state(state, widgets);
     switch_screen(widgets, "setup");
 }
-
-// ----------------------------------------------------------- review screen
 
 fn spawn_decode_bridge(state: &SharedState, widgets: &Widgets) {
     let result_rx = state
@@ -490,9 +475,6 @@ fn on_decode_result(state: &SharedState, widgets: &Widgets, result: DecodeResult
             }
         }
         let should_render = result.index == st.current_index;
-        // render_current() already refreshes the ahead-ready label; only
-        // needed here for background prefetch progress that doesn't
-        // otherwise touch the screen.
         if !should_render {
             if let Some(project) = st.project.as_ref() {
                 let text = ahead_label_text(project, &st.cache, st.current_index);
@@ -627,8 +609,6 @@ fn toggle_fullscreen(widgets: &Widgets) {
     }
 }
 
-// ---------------------------------------------------------- summary screen
-
 fn show_summary(state: &SharedState, widgets: &Widgets) {
     let (keep_count, trash_count, undecided_count, kept_bytes, target) = {
         let st = state.borrow();
@@ -663,8 +643,6 @@ fn show_summary(state: &SharedState, widgets: &Widgets) {
 
     switch_screen(widgets, "summary");
 }
-
-// ------------------------------------------------------------- copy screen
 
 pub fn start_copy(state: &SharedState, widgets: &Widgets) {
     let project = match &state.borrow().project {
@@ -777,19 +755,6 @@ pub fn open_target_folder(state: &SharedState, widgets: &Widgets) {
     });
 }
 
-// -------------------------------------------------------- pre-render pass
-//
-// Decodes every photo once ahead of time and caches a small already-
-// downscaled JPEG on disk (see `marshmallow_core::prerender`), so later
-// browsing — even outside the RAM look-ahead window — reads a tiny file
-// instead of the original and stays effectively instant. Meant to be
-// kicked off deliberately before stepping away, not run silently.
-
-/// Enters the dedicated full-screen pre-render page. Deliberately stops
-/// normal review — the RAM look-ahead cache is dropped (it'll refill fast
-/// from the pre-render cache once the user returns anyway) and no more
-/// interactive decode requests are issued while this screen is showing,
-/// so every CPU core goes to the batch pass instead of competing with it.
 pub fn start_prerender(state: &SharedState, widgets: &Widgets) {
     if state.borrow().prerender_cancel.is_some() {
         return;
@@ -896,9 +861,6 @@ fn on_prerender_finished(
     widgets.prerender_done_box.set_visible(true);
 }
 
-/// Returns to the review screen and refills the (intentionally dropped)
-/// RAM window — fast even for a cold cache now, since anything already
-/// pre-rendered decodes from the small on-disk copy.
 pub fn continue_review(state: &SharedState, widgets: &Widgets) {
     switch_screen(widgets, "review");
     request_prefetch_window(state);

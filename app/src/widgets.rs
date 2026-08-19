@@ -1,8 +1,5 @@
 use adw::prelude::*;
 
-/// Every GTK widget the app needs to reach again after construction.
-/// GTK objects are cheap to clone (refcounted), so this whole struct is
-/// `Clone` and closures just capture the handles they need.
 #[derive(Clone)]
 pub struct Widgets {
     pub window: adw::ApplicationWindow,
@@ -11,7 +8,6 @@ pub struct Widgets {
     pub back_button: gtk4::Button,
     pub prerender_button: gtk4::Button,
 
-    // Setup screen
     pub sources_list: gtk4::ListBox,
     pub target_row: adw::ActionRow,
     pub setup_status_label: gtk4::Label,
@@ -19,7 +15,6 @@ pub struct Widgets {
     pub choose_target_button: gtk4::Button,
     pub primary_action_button: gtk4::Button,
 
-    // Review screen
     pub media_stack: gtk4::Stack,
     pub picture: gtk4::Picture,
     pub video: gtk4::Video,
@@ -29,13 +24,11 @@ pub struct Widgets {
     pub review_ahead_label: gtk4::Label,
     pub key_controller: gtk4::EventControllerKey,
 
-    // Summary screen
     pub summary_counts_label: gtk4::Label,
     pub summary_size_label: gtk4::Label,
     pub summary_banner: adw::Banner,
     pub start_copy_button: gtk4::Button,
 
-    // Copy screen
     pub copy_progress_bar: gtk4::ProgressBar,
     pub copy_current_file_label: gtk4::Label,
     pub copy_cancel_button: gtk4::Button,
@@ -44,7 +37,6 @@ pub struct Widgets {
     pub copy_open_target_button: gtk4::Button,
     pub copy_back_button: gtk4::Button,
 
-    // Pre-render screen
     pub prerender_progress_bar: gtk4::ProgressBar,
     pub prerender_status_label: gtk4::Label,
     pub prerender_cancel_button: gtk4::Button,

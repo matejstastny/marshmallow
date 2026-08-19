@@ -5,24 +5,14 @@ use std::sync::Arc;
 use marshmallow_core::decode::{DecodePipeline, DecodedCache};
 use marshmallow_core::project::{Decision, Project, Source};
 
-/// Target long edge (px) that decoded photos are downscaled to before
-/// being cached. Fixed for v1 rather than reacting to window resizes —
-/// generous enough for any desktop display while keeping decode/cache
-/// cost far below full source resolution.
 pub const DECODE_TARGET_LONG_EDGE: u32 = 2200;
 
-/// At 2200px long edge, a decoded RGBA8 photo is ~13-15MB. A 100-ahead
-/// window (plus behind/eviction padding, ~115 images worst case) costs
-/// roughly 1.6GB — sized for a 16GB+ machine; drop `WINDOW_AHEAD` (and
-/// shrink the budget/capacity to match) on a more RAM-constrained board.
+// if you lower WINDOW_AHEAD for a RAM-constrained board, shrink CACHE_BYTE_BUDGET/CACHE_CAPACITY to match
 pub const CACHE_CAPACITY: usize = 130;
 pub const CACHE_BYTE_BUDGET: usize = 1792 * 1024 * 1024;
 pub const WINDOW_BEHIND: usize = 5;
 pub const WINDOW_AHEAD: usize = 100;
 
-/// All mutable application data. Deliberately holds no GTK widgets so it
-/// stays plain and easy to reason about; widgets live in `Widgets` and are
-/// driven by the functions in `actions.rs`.
 pub struct AppState {
     pub sources_pending: Vec<Source>,
     pub target_pending: Option<PathBuf>,
@@ -77,10 +67,6 @@ impl AppState {
     }
 }
 
-/// Coalescing autosave: a dedicated thread that always saves the most
-/// recently requested snapshot. `try_send` drops a request if the saver
-/// is still writing the previous one, so rapid review naturally batches
-/// disk writes instead of queuing them up.
 pub struct ProjectSaver {
     tx: std::sync::mpsc::SyncSender<Project>,
 }
@@ -103,9 +89,6 @@ impl ProjectSaver {
     }
 }
 
-/// Bridges a crossbeam-channel receiver (used by the pure-Rust core) onto
-/// an `async_channel` receiver that can be awaited from the GTK main
-/// thread via `glib::spawn_future_local`.
 pub fn bridge_to_async<T: Send + 'static>(
     rx: crossbeam_channel::Receiver<T>,
 ) -> async_channel::Receiver<T> {
