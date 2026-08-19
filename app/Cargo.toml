@@ -1,0 +1,22 @@
+[package]
+name = "marshmallow"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "marshmallow"
+path = "src/main.rs"
+
+[dependencies]
+marshmallow-core = { path = "../core" }
+gtk4 = { version = "0.11", features = ["v4_16"] }
+gdk4 = "0.11"
+adw = { package = "libadwaita", version = "0.9", features = ["v1_5"] }
+async-channel = "2"
+chrono = "0.4"
+glib = "0.22"
+gio = "0.22"
+fs4 = "1.1.0"
+crossbeam-channel = "0.5.16"
+anyhow = "1.0.104"
