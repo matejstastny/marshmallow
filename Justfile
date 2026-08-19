@@ -7,8 +7,11 @@ run:
 build:
     cargo build --workspace
 
-release:
+build-release:
     cargo build --workspace --release
+
+release:
+    ./scripts/release.sh
 
 fmt:
     cargo fmt --all
