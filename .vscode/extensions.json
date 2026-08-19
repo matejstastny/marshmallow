@@ -1,8 +1,8 @@
 {
-  "recommendations": [
-    "rust-lang.rust-analyzer",
-    "vadimcn.vscode-lldb",
-    "tamasfe.even-better-toml",
-    "skellock.just"
-  ]
+    "recommendations": [
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb",
+        "tamasfe.even-better-toml",
+        "skellock.just"
+    ]
 }
