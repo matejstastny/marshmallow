@@ -9,7 +9,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 walkdir = "2"
 image = "0.25"
-libheif-rs = { version = "2", features = ["image"] }
+libheif-rs = { version = "2", features = ["image", "embedded-libheif"] }
 kamadak-exif = "0.6"
 fast_image_resize = "5"
 lru = "0.12"

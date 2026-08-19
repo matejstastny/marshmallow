@@ -11,18 +11,24 @@ env:
 jobs:
     check:
         runs-on: ubuntu-latest
+        container: ubuntu:25.04
         steps:
-            - uses: actions/checkout@v4
-
             - name: Install system dependencies
               run: |
-                  sudo apt-get update
-                  sudo apt-get install -y \
+                  apt-get update
+                  apt-get install -y \
+                    git \
+                    curl \
+                    build-essential \
+                    ca-certificates \
+                    cmake \
+                    nasm \
                     libgtk-4-dev \
                     libadwaita-1-dev \
-                    libheif-dev \
                     libturbojpeg0-dev \
                     pkg-config
+
+            - uses: actions/checkout@v4
 
             - uses: dtolnay/rust-toolchain@stable
               with:
