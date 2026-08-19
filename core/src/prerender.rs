@@ -32,6 +32,14 @@ pub fn cache_dir(target: &Path) -> PathBuf {
     target.join(".marshmallow").join("cache")
 }
 
+pub fn clear_cache_dir(target: &Path) -> anyhow::Result<()> {
+    let dir = cache_dir(target);
+    if dir.exists() {
+        std::fs::remove_dir_all(&dir)?;
+    }
+    Ok(())
+}
+
 pub fn cache_path_for(target: &Path, source_id: u32, relative_path: &Path) -> PathBuf {
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};

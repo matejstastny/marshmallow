@@ -649,6 +649,7 @@ pub fn start_copy(state: &SharedState, widgets: &Widgets) {
         Some(p) => p.clone(),
         None => return,
     };
+    let target = project.target.clone();
 
     widgets.copy_done_box.set_visible(false);
     widgets.copy_cancel_button.set_visible(true);
@@ -682,7 +683,7 @@ pub fn start_copy(state: &SharedState, widgets: &Widgets) {
         let widgets = widgets.clone();
         glib::spawn_future_local(async move {
             if let Ok(result) = outcome_rx.recv().await {
-                on_copy_finished(&state, &widgets, result);
+                on_copy_finished(&state, &widgets, result, &target);
             }
         });
     }
@@ -707,7 +708,12 @@ fn update_copy_progress(widgets: &Widgets, p: &CopyProgress) {
     }
 }
 
-fn on_copy_finished(state: &SharedState, widgets: &Widgets, result: anyhow::Result<CopyOutcome>) {
+fn on_copy_finished(
+    state: &SharedState,
+    widgets: &Widgets,
+    result: anyhow::Result<CopyOutcome>,
+    target: &std::path::Path,
+) {
     widgets.copy_cancel_button.set_visible(false);
     match result {
         Ok(outcome) => {
@@ -724,6 +730,8 @@ fn on_copy_finished(state: &SharedState, widgets: &Widgets, result: anyhow::Resu
                 text.push_str(
                     "\n\nCopy was cancelled — files already copied remain on the target.",
                 );
+            } else if let Err(e) = marshmallow_core::prerender::clear_cache_dir(target) {
+                eprintln!("marshmallow: failed to clear prerender cache: {e}");
             }
             widgets.copy_done_label.set_text(&text);
             widgets.copy_progress_bar.set_fraction(1.0);
